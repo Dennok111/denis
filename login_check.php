@@ -2,14 +2,20 @@
 session_start();
 require_once 'includes/functions.php';
 
+// Create an instance of the CensusSystem class
 $census = new CensusSystem("localhost", "root", "", "census");
 
-$email = $_POST['username'];
-$password = $_POST['password'];
-echo $email;
-echo $password;
-echo $census->loginUser($email, $password);
+// Retrieve and sanitize user input
+$email = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_EMAIL);
+$password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+
+// Debugging: output user input (remove in production)
+
+// Validate login credentials
 if ($census->loginUser($email, $password)) {
+    // Set session variable for user role
+ // Ensure this function exists and returns user role
+
     // Redirect based on user role
     switch ($_SESSION['user_role']) {
         case 'Admin':
@@ -18,16 +24,50 @@ if ($census->loginUser($email, $password)) {
         case 'DataCollector':
             header("Location: data_collector_dashboard.php");
             break;
-        case 'Viewer':
-            header("Location: viewer_dashboard.php");
+        case '3':
+            ?>
+            <script>
+            location.replace("dataAnalyst");
+            </script>
+            <?php
             break;
+        case '4':
+                ?>
+                <script>
+                location.replace("researcher");
+                </script>
+                <?php
+                break;
+        case '5':
+                ?>
+                <script>
+                location.replace("citizen");
+                </script>
+                <?php
+                break;
+        case '6':
+                ?>
+                <script>
+                location.replace("governmentAgent");
+                </script>
+                <?php
+                break;
         default:
-            header("Location: default_dashboard.php");
+        ?>
+<script>
+        location.replace("login.php?error=1");
+            </script>
+        <?php
             break;
     }
     exit();
 } else {
-    //header("Location: login.html?error=1"); // Redirect back to login with an error
+    // Redirect back to login with an error
+?>
+<script>
+location.replace("login.php?error=1");
+    </script>
+<?php
     exit();
 }
 ?>
